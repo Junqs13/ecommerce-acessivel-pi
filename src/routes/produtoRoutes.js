@@ -2,10 +2,13 @@ const express = require('express');
 const router = express.Router();
 const produtoController = require('../controllers/produtoController');
 
-// Rota para listar todos os produtos (GET /api/produtos)
+// Rota para listar todos os produtos
 router.get('/', produtoController.listarTodos);
 
-// Rota para buscar um produto específico pelo ID (GET /api/produtos/:id)
+// NOVO: Rota para as estatísticas do Dashboard
+router.get('/estatisticas', produtoController.estatisticas);
+
+// Rota para buscar um produto específico pelo ID
 router.get('/:id', produtoController.buscarPorId);
 
 module.exports = router;

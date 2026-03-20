@@ -14,14 +14,16 @@ const db = require('./src/config/db');
 
 // Importa as rotas
 const produtoRoutes = require('./src/routes/produtoRoutes');
+const usuarioRoutes = require('./src/routes/usuarioRoutes'); // <--- Nova rota importada
+
+// Configura o uso das rotas
+app.use('/api/produtos', produtoRoutes);
+app.use('/api/usuarios', usuarioRoutes); // <--- Nova rota em uso
 
 // Rota de teste
 app.get('/', (req, res) => {
     res.json({ mensagem: 'API do E-commerce de Instrumentos Musicais rodando perfeitamente!' });
 });
-
-// Configura o uso das rotas de produtos
-app.use('/api/produtos', produtoRoutes);
 
 // Define a porta e inicia o servidor
 const PORT = process.env.PORT || 3000;
