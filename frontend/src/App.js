@@ -1,22 +1,19 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { BrowserRouter as Router, Routes, Route, Link, Navigate, useNavigate } from 'react-router-dom';
 import Vitrine from './components/Vitrine';
 import Dashboard from './components/Dashboard';
 import Login from './components/Login';
+import Carrinho from './components/Carrinho';
+import LoginCliente from './components/LoginCliente';
 
-// Componente para proteger as rotas do lojista
 const RotaProtegida = ({ children }) => {
   const token = localStorage.getItem('token_pi');
-  // Se não tem token, redireciona para a tela de login
-  if (!token) {
-    return <Navigate to="/login" replace />;
-  }
-  // Se tem token, deixa a pessoa acessar o painel (children)
+  if (!token) return <Navigate to="/login" replace />;
   return children;
 };
 
-// Componente do Menu para lidar com o botão de Sair (Logout)
-const MenuNavegacao = () => {
+// O Menu agora recebe a quantidade de itens no carrinho
+const MenuNavegacao = ({ qtdCarrinho }) => {
   const navigate = useNavigate();
   const token = localStorage.getItem('token_pi');
 
@@ -28,27 +25,28 @@ const MenuNavegacao = () => {
 
   return (
     <header role="banner" className="header-nav">
-      <h2>E-commerce Acessível - PI</h2>
+      <h2 style={{ margin: 0 }}>E-commerce Acessível - PI</h2>
       <nav aria-label="Navegação Principal">
         <ul style={{ listStyle: 'none', display: 'flex', gap: '20px', margin: 0, padding: 0, alignItems: 'center' }}>
           <li>
-            <Link to="/" aria-label="Ir para a página da loja">🏪 Loja (Cliente)</Link>
+            <Link to="/" aria-label="Ir para a página da loja">🏪 Loja</Link>
+          </li>
+          
+          {/* Link para o carrinho com a quantidade dinâmica */}
+          <li>
+            <Link to="/carrinho" style={{ color: 'var(--accent)' }}>
+              🛒 Carrinho ({qtdCarrinho})
+            </Link>
           </li>
           
           {!token ? (
             <li>
-              <Link to="/login" style={{ color: 'var(--focus-ring)' }} aria-label="Fazer login no painel">🔐 Entrar</Link>
+              <Link to="/login" style={{ color: '#fff', border: '1px solid #fff' }}>🔐 Entrar</Link>
             </li>
           ) : (
             <>
-              <li>
-                <Link to="/admin" style={{ color: 'var(--focus-ring)' }} aria-label="Ir para o painel de controle">⚙️ Painel Admin</Link>
-              </li>
-              <li>
-                <button onClick={fazerLogout} style={{ background: 'none', border: 'none', color: '#ff4d4d', cursor: 'pointer', fontWeight: 'bold', fontSize: '1rem' }}>
-                  Sair
-                </button>
-              </li>
+              <li><Link to="/admin">⚙️ Painel Admin</Link></li>
+              <li><button onClick={fazerLogout} style={{ background: 'none', border: 'none', color: '#ff4d4d', cursor: 'pointer', fontWeight: 'bold', fontSize: '1rem' }}>Sair</button></li>
             </>
           )}
         </ul>
@@ -58,20 +56,24 @@ const MenuNavegacao = () => {
 };
 
 function App() {
+  // A memória do carrinho agora vive aqui no App.js!
+  const [carrinho, setCarrinho] = useState([]);
+
   return (
     <Router>
       <div className="App">
-        <MenuNavegacao />
+        <MenuNavegacao qtdCarrinho={carrinho.length} />
         
-        <div style={{ padding: '20px' }}>
+        <div>
           <Routes>
-            <Route path="/" element={<Vitrine />} />
+            <Route path="/" element={<Vitrine carrinho={carrinho} setCarrinho={setCarrinho} />} />
+            <Route path="/carrinho" element={<Carrinho carrinho={carrinho} setCarrinho={setCarrinho} />} />
             <Route path="/login" element={<Login />} />
+            <Route path="/login-cliente" element={<LoginCliente />} /> {/* <-- Nova Rota Aqui */}
             
-            {/* A rota /admin agora está envolvida pela RotaProtegida */}
             <Route path="/admin" element={
               <RotaProtegida>
-                <div style={{ maxWidth: '1200px', margin: '0 auto' }}>
+                <div style={{ maxWidth: '1200px', margin: '0 auto', padding: '20px' }}>
                   <Dashboard />
                 </div>
               </RotaProtegida>

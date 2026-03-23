@@ -12,18 +12,32 @@ const produtoController = {
         }
     },
 
-    // NOVO: Busca estatísticas agrupadas para o Dashboard Analítico
+    // NOVO: Busca estatísticas avançadas para o Dashboard Analítico
     estatisticas: async (req, res) => {
         try {
-            // Conta quantos produtos existem em cada categoria e soma o estoque
-            const [linhas] = await db.query(`
+            // 1. Agrupamento por Categoria (para os gráficos)
+            const [porCategoria] = await db.query(`
                 SELECT categoria, 
                        COUNT(*) as quantidade_modelos, 
-                       SUM(estoque) as total_pecas_estoque 
+                       SUM(estoque) as total_pecas_estoque,
+                       SUM(preco * estoque) as valor_total_estoque
                 FROM produtos 
                 GROUP BY categoria
             `);
-            res.json(linhas);
+
+            // 2. Totais Gerais (para os cartões de resumo)
+            const [geral] = await db.query(`
+                SELECT COUNT(*) as total_produtos, 
+                       SUM(estoque) as total_itens,
+                       SUM(preco * estoque) as patrimonio_total
+                FROM produtos
+            `);
+
+            // Retorna um objeto complexo com as duas informações
+            res.json({
+                porCategoria,
+                geral: geral[0]
+            });
         } catch (erro) {
             console.error('Erro ao buscar estatísticas:', erro);
             res.status(500).json({ erro: 'Erro interno ao gerar análises.' });

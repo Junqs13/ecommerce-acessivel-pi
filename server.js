@@ -25,8 +25,13 @@ app.get('/', (req, res) => {
     res.json({ mensagem: 'API do E-commerce de Instrumentos Musicais rodando perfeitamente!' });
 });
 
-// Define a porta e inicia o servidor
+// Define a porta e inicia o servidor APENAS se não estiver rodando teste
 const PORT = process.env.PORT || 3000;
-app.listen(PORT, () => {
-    console.log(`Servidor rodando na porta ${PORT}`);
-});
+
+if (require.main === module) {
+    app.listen(PORT, () => {
+        console.log(`Servidor rodando na porta ${PORT}`);
+    });
+}
+
+module.exports = app;
