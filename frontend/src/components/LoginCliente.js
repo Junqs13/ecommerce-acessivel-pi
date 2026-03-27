@@ -19,7 +19,7 @@ const LoginCliente = () => {
     const corpoRequisicao = modoLogin ? { email, senha } : { nome, email, senha };
 
     try {
-      const resposta = await fetch(`http://localhost:3000${endpoint}`, {
+      const resposta = await fetch(`https://api-ecommerce-pi.onrender.com${endpoint}`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(corpoRequisicao)

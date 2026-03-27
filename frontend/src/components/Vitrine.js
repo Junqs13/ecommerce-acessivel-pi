@@ -11,7 +11,7 @@ const Vitrine = ({ carrinho, setCarrinho }) => {
   const navigate = useNavigate();
 
   useEffect(() => {
-    fetch('http://localhost:3000/api/produtos')
+    fetch('https://api-ecommerce-pi.onrender.com')
       .then((resposta) => resposta.json())
       .then((dados) => setProdutos(dados))
       .catch((err) => setErro(err.message));
