@@ -9,7 +9,7 @@ const Dashboard = () => {
   const [erroApi, setErroApi] = useState(false);
 
   useEffect(() => {
-    fetch('https://api-ecommerce-pi.onrender.com')
+    fetch('https://api-ecommerce-pi.onrender.com/api/estatisticas')
       .then((resposta) => resposta.json())
       .then((dados) => {
         // Verifica se o backend mandou o formato novo corretamente
