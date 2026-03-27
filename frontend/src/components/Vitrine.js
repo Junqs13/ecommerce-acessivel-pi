@@ -11,20 +11,35 @@ const Vitrine = ({ carrinho, setCarrinho }) => {
   const navigate = useNavigate();
 
   useEffect(() => {
-    fetch('https://api-ecommerce-pi.onrender.com')
+    fetch('https://api-ecommerce-pi.onrender.com/api/produtos')
       .then((resposta) => resposta.json())
-      .then((dados) => setProdutos(dados))
-      .catch((err) => setErro(err.message));
+      .then((dados) => {
+        // TRAVA DE SEGURANÇA: Verifica se a API mandou uma lista de verdade
+        if (Array.isArray(dados)) {
+          setProdutos(dados);
+          setErro(null);
+        } else {
+          // Se mandou um objeto de erro, exibe na tela
+          setErro(dados.erro || 'A API não retornou a lista de instrumentos.');
+        }
+      })
+      .catch((err) => setErro('Falha de conexão: A API pode estar desligada. ' + err.message));
   }, []);
 
   const adicionarAoCarrinho = (produto) => {
-    setCarrinho([...carrinho, produto]);
+    // Garante que o carrinho é um array antes de adicionar
+    if (Array.isArray(carrinho)) {
+      setCarrinho([...carrinho, produto]);
+    } else {
+      setCarrinho([produto]);
+    }
   };
 
-  const totalCarrinho = carrinho.reduce((total, item) => total + parseFloat(item.preco), 0);
+  const carrinhoSeguro = Array.isArray(carrinho) ? carrinho : [];
+  const totalCarrinho = carrinhoSeguro.reduce((total, item) => total + parseFloat(item.preco), 0);
 
-  // Lógica de Filtragem e Ordenação
-  let produtosFiltrados = [...produtos];
+  // Lógica de Filtragem e Ordenação com proteção "is not iterable"
+  let produtosFiltrados = Array.isArray(produtos) ? [...produtos] : [];
 
   if (categoriaFiltro !== 'Todas') {
     produtosFiltrados = produtosFiltrados.filter(p => p.categoria === categoriaFiltro);
@@ -40,13 +55,11 @@ const Vitrine = ({ carrinho, setCarrinho }) => {
     produtosFiltrados.sort((a, b) => parseFloat(b.preco) - parseFloat(a.preco));
   }
 
-  // Pegar categorias únicas para o Select
-  const categoriasUnicas = ['Todas', ...new Set(produtos.map(p => p.categoria))];
+  const categoriasUnicas = ['Todas', ...new Set(produtosFiltrados.map(p => p.categoria))];
 
   return (
     <main className="container">
       
-      {/* SEÇÃO DE BANNERS / DESTAQUES */}
       <section className="banner-container" aria-label="Promoções em destaque">
         <div className="banner">
           <h3>🎸 Lendas do Rock</h3>
@@ -62,7 +75,6 @@ const Vitrine = ({ carrinho, setCarrinho }) => {
         </div>
       </section>
 
-      {/* BARRA DE FILTROS E ORDENAÇÃO */}
       <section className="filtros-bar" aria-label="Controles de filtragem">
         <div>
           <label htmlFor="filtro-categoria" style={{ fontWeight: 'bold', marginRight: '10px' }}>Categoria:</label>
@@ -83,9 +95,13 @@ const Vitrine = ({ carrinho, setCarrinho }) => {
         </div>
       </section>
 
-      {erro && <div role="alert" style={{ color: 'red' }}><p>Erro: {erro}</p></div>}
+      {/* SE HOUVER ERRO, MOSTRA NA TELA EM VEZ DE QUEBRAR O SITE */}
+      {erro && (
+        <div role="alert" style={{ backgroundColor: '#ff7675', color: 'white', padding: '15px', borderRadius: '8px', marginBottom: '20px', textAlign: 'center', fontWeight: 'bold' }}>
+          ⚠️ Aviso: {erro}
+        </div>
+      )}
 
-      {/* GRID DA VITRINE */}
       <section aria-label="Lista de Produtos" className="vitrine-grid">
         {produtosFiltrados.map((produto) => (
           <article key={produto.id} className="produto-card" tabIndex="0">
@@ -106,11 +122,10 @@ const Vitrine = ({ carrinho, setCarrinho }) => {
         ))}
       </section>
 
-      {/* CARRINHO FLUTUANTE */}
-      {carrinho.length > 0 && (
+      {carrinhoSeguro.length > 0 && (
         <div className="carrinho-flutuante" aria-label="Resumo do carrinho de compras">
           <div>
-            <span style={{ display: 'block', fontWeight: 'bold', fontSize: '1.2rem' }}>🛒 {carrinho.length} itens</span>
+            <span style={{ display: 'block', fontWeight: 'bold', fontSize: '1.2rem' }}>🛒 {carrinhoSeguro.length} itens</span>
             <span>Total: R$ {totalCarrinho.toLocaleString('pt-BR', { minimumFractionDigits: 2 })}</span>
           </div>
           <button 
@@ -121,7 +136,6 @@ const Vitrine = ({ carrinho, setCarrinho }) => {
           </button>
         </div>
       )}
-
     </main>
   );
 };
