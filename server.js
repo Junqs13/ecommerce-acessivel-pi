@@ -15,11 +15,12 @@ const db = require('./src/config/db');
 // Importa as rotas
 const produtoRoutes = require('./src/routes/produtoRoutes');
 const usuarioRoutes = require('./src/routes/usuarioRoutes'); // <--- Nova rota importada
+const pedidoRoutes = require('./src/routes/pedidoRoutes');
 
 // Configura o uso das rotas
 app.use('/api/produtos', produtoRoutes);
 app.use('/api/usuarios', usuarioRoutes); // <--- Nova rota em uso
-
+app.use('/api/pedidos', pedidoRoutes);
 // Rota de teste
 app.get('/', (req, res) => {
     res.json({ mensagem: 'API do E-commerce de Instrumentos Musicais rodando perfeitamente!' });
