@@ -6,7 +6,10 @@ const Carrinho = ({ carrinho, setCarrinho }) => {
   const [cep, setCep] = useState('');
   const [frete, setFrete] = useState(null);
   
-  // NOVO: Controle das etapas e do pagamento
+  // NOVO: Estado para guardar o endereço de entrega
+  const [endereco, setEndereco] = useState({ rua: '', numero: '', bairro: '', cep_entrega: '' });
+  
+  // Controle das etapas e do pagamento
   const [etapa, setEtapa] = useState('carrinho'); // pode ser 'carrinho' ou 'pagamento'
   const [metodoPagamento, setMetodoPagamento] = useState('pix'); // 'pix' ou 'cartao'
   
@@ -20,7 +23,10 @@ const Carrinho = ({ carrinho, setCarrinho }) => {
   };
 
   const simularFrete = () => {
-    if (cep.length >= 8) setFrete(50.00);
+    if (cep.length >= 8) {
+        setFrete(50.00);
+        setEndereco({ ...endereco, cep_entrega: cep }); // Já preenche o CEP no endereço
+    }
   };
 
   // Passo 1: Valida se pode ir para a tela de pagamento
@@ -43,16 +49,51 @@ const Carrinho = ({ carrinho, setCarrinho }) => {
   };
 
   // Passo 2: O clique final depois de preencher o cartão ou escanear o PIX
-  const processarPagamentoFinal = (e) => {
+  const processarPagamentoFinal = async (e) => {
     if (e) e.preventDefault(); // Evita recarregar a página se for form de cartão
+
+    // Validação para garantir que o endereço foi preenchido
+    if (!endereco.rua || !endereco.numero || !endereco.bairro || !endereco.cep_entrega) {
+      toast.warning('Por favor, preencha todos os campos do endereço de entrega.');
+      return;
+    }
 
     const dadosUtilizador = localStorage.getItem('usuario_pi');
     const utilizador = JSON.parse(dadosUtilizador);
     
-    // Sucesso!
-    toast.success(`🎉 Pagamento Aprovado! Parabéns, ${utilizador.nome}. A sua encomenda foi registada.`); 
-    setCarrinho([]); 
-    navigate('/'); 
+    // Monta o endereço bonitinho em uma linha só
+    const enderecoCompleto = `${endereco.rua}, ${endereco.numero} - ${endereco.bairro} (CEP: ${endereco.cep_entrega})`;
+
+    // Prepara o "pacote" de dados para enviar para Ohio
+    const dadosPedido = {
+      usuario_id: utilizador.id,
+      nome_cliente: utilizador.nome,
+      total: totalGeral,
+      metodo_pagamento: metodoPagamento,
+      endereco: enderecoCompleto
+    };
+
+    try {
+      // Faz a chamada para a sua API no Render salvar no banco Aiven
+      const resposta = await fetch('https://api-ecommerce-oficial.onrender.com/api/pedidos', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(dadosPedido)
+      });
+
+      if (!resposta.ok) {
+          throw new Error('Falha ao registrar o pedido no banco de dados.');
+      }
+
+      // Sucesso!
+      toast.success(`🎉 Pagamento Aprovado! Parabéns, ${utilizador.nome}. A sua encomenda foi registada e o endereço salvo.`); 
+      setCarrinho([]); 
+      navigate('/'); 
+
+    } catch (erro) {
+      toast.error('Erro ao processar a venda. Verifique a conexão com o servidor.');
+      console.error(erro);
+    }
   };
 
   // ==========================================================
@@ -129,7 +170,7 @@ const Carrinho = ({ carrinho, setCarrinho }) => {
   }
 
   // ==========================================================
-  // TELA 2: O CHECKOUT (PAGAMENTO)
+  // TELA 2: O CHECKOUT (PAGAMENTO E ENDEREÇO)
   // ==========================================================
   return (
     <main className="container" aria-labelledby="titulo-pagamento" style={{ marginTop: '30px', maxWidth: '800px' }}>
@@ -138,11 +179,29 @@ const Carrinho = ({ carrinho, setCarrinho }) => {
       </button>
 
       <div style={{ backgroundColor: 'var(--bg-card)', padding: '30px', borderRadius: '12px', boxShadow: '0 4px 15px rgba(0,0,0,0.1)' }}>
+        
         <h1 id="titulo-pagamento" style={{ marginTop: 0, color: 'var(--primary)', borderBottom: '2px solid var(--border)', paddingBottom: '10px' }}>
-          💳 Pagamento Seguro
+          Finalizar Compra
         </h1>
 
-        <div style={{ display: 'flex', gap: '20px', marginBottom: '30px', marginTop: '20px' }}>
+        {/* =============== NOVO: FORMULÁRIO DE ENDEREÇO =============== */}
+        <div style={{ marginBottom: '30px', padding: '20px', border: '1px solid var(--border)', borderRadius: '8px', backgroundColor: 'rgba(0,0,0,0.02)' }}>
+          <h3 style={{ marginTop: 0, marginBottom: '15px', display: 'flex', alignItems: 'center', gap: '8px' }}>
+            📍 Endereço de Entrega
+          </h3>
+          <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
+            <input type="text" placeholder="Rua / Avenida" required value={endereco.rua} onChange={(e) => setEndereco({...endereco, rua: e.target.value})} style={{ padding: '10px', borderRadius: '5px', border: '1px solid var(--border)', background: 'transparent', color: 'var(--text-main)' }} />
+            <div style={{ display: 'flex', gap: '10px' }}>
+              <input type="text" placeholder="Número" required value={endereco.numero} onChange={(e) => setEndereco({...endereco, numero: e.target.value})} style={{ padding: '10px', borderRadius: '5px', border: '1px solid var(--border)', width: '30%', background: 'transparent', color: 'var(--text-main)' }} />
+              <input type="text" placeholder="Bairro" required value={endereco.bairro} onChange={(e) => setEndereco({...endereco, bairro: e.target.value})} style={{ padding: '10px', borderRadius: '5px', border: '1px solid var(--border)', width: '70%', background: 'transparent', color: 'var(--text-main)' }} />
+            </div>
+            <input type="text" placeholder="CEP" required value={endereco.cep_entrega} onChange={(e) => setEndereco({...endereco, cep_entrega: e.target.value})} style={{ padding: '10px', borderRadius: '5px', border: '1px solid var(--border)', background: 'transparent', color: 'var(--text-main)' }} />
+          </div>
+        </div>
+        {/* ========================================================== */}
+
+        <h3 style={{ marginTop: 0, marginBottom: '15px' }}>💳 Método de Pagamento</h3>
+        <div style={{ display: 'flex', gap: '20px', marginBottom: '30px' }}>
           <button 
             onClick={() => setMetodoPagamento('pix')} 
             style={{ flex: 1, padding: '15px', borderRadius: '8px', border: `2px solid ${metodoPagamento === 'pix' ? 'var(--accent)' : 'var(--border)'}`, backgroundColor: metodoPagamento === 'pix' ? 'rgba(225, 177, 44, 0.1)' : 'transparent', color: 'var(--text-main)', fontWeight: 'bold', cursor: 'pointer', fontSize: '1.1rem' }}
@@ -161,13 +220,12 @@ const Carrinho = ({ carrinho, setCarrinho }) => {
         {metodoPagamento === 'pix' && (
           <div style={{ textAlign: 'center', padding: '20px', border: '1px solid var(--border)', borderRadius: '8px' }}>
             <p style={{ fontSize: '1.2rem', marginBottom: '10px' }}>Abra o app do seu banco e escaneie o código abaixo:</p>
-            {/* Gerador de QR Code genérico para demonstração */}
             <img src={`https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=PagamentoPIXEcommercePI_R$${totalGeral}`} alt="QR Code PIX" style={{ borderRadius: '10px', marginBottom: '15px' }} />
             <p style={{ fontWeight: 'bold', fontSize: '1.5rem', color: 'var(--primary)' }}>
               Total: R$ {totalGeral.toLocaleString('pt-BR', { minimumFractionDigits: 2 })}
             </p>
             <button onClick={processarPagamentoFinal} className="btn btn-comprar" style={{ width: 'auto', padding: '10px 30px', marginTop: '10px' }}>
-              Simular Pagamento Concluído
+              Confirmar PIX Realizado
             </button>
           </div>
         )}
