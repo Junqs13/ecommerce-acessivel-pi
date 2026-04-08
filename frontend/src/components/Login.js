@@ -25,7 +25,7 @@ const Login = () => {
       : { nome, email, senha, tipo: 'admin' };
 
     try {
-      const resposta = await fetch(`https://api-ecommerce-pi-ohio.onrender.com${endpoint}`, {
+      const resposta = await fetch(`https://api-ecommerce-oficial.onrender.com${endpoint}`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(corpoRequisicao)

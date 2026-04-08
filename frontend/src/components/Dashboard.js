@@ -20,11 +20,11 @@ const Dashboard = () => {
 
   const carregarDados = () => {
     setCarregando(true);
-    const fetchEstatisticas = fetch('https://api-ecommerce-pi-ohio.onrender.com/api/produtos/estatisticas').then(res => res.json());
-    const fetchProdutos = fetch('https://api-ecommerce-pi-ohio.onrender.com/api/produtos').then(res => res.json());
+    const fetchEstatisticas = fetch('https://api-ecommerce-oficial.onrender.com/api/produtos/estatisticas').then(res => res.json());
+    const fetchProdutos = fetch('https://api-ecommerce-oficial.onrender.com/api/produtos').then(res => res.json());
     
     // NOVO: Busca a lista de pedidos/vendas. Se a rota ainda não existir, retorna array vazio para não quebrar.
-    const fetchPedidos = fetch('https://api-ecommerce-pi-ohio.onrender.com/api/pedidos')
+    const fetchPedidos = fetch('https://api-ecommerce-oficial.onrender.com/api/pedidos')
       .then(res => res.ok ? res.json() : [])
       .catch(() => []);
 
@@ -69,8 +69,8 @@ const Dashboard = () => {
     e.preventDefault();
     try {
       const url = editandoId 
-        ? `https://api-ecommerce-pi-ohio.onrender.com/api/produtos/${editandoId}` 
-        : 'https://api-ecommerce-pi-ohio.onrender.com/api/produtos';
+        ? `https://api-ecommerce-oficial.onrender.com/api/produtos/${editandoId}` 
+        : 'https://api-ecommerce-oficial.onrender.com/api/produtos';
       
       const method = editandoId ? 'PUT' : 'POST';
 
@@ -110,7 +110,7 @@ const Dashboard = () => {
   const handleDeletar = async (id, nome) => {
     if (!window.confirm(`Tem certeza que deseja excluir "${nome}"?`)) return;
     try {
-      const resposta = await fetch(`https://api-ecommerce-pi-ohio.onrender.com/api/produtos/${id}`, { method: 'DELETE' });
+      const resposta = await fetch(`https://api-ecommerce-oficial.onrender.com/api/produtos/${id}`, { method: 'DELETE' });
       if (resposta.ok) { toast.success('Produto removido!'); carregarDados(); } 
       else { toast.error('Erro ao remover.'); }
     } catch (error) { toast.error('Erro de conexão.'); }
@@ -119,7 +119,7 @@ const Dashboard = () => {
   // NOVO: Função para atualizar o estado da encomenda (Aguardando Pagamento -> Enviado)
   const handleAtualizarStatusPedido = async (id, novoStatus) => {
     try {
-      const resposta = await fetch(`https://api-ecommerce-pi-ohio.onrender.com/api/pedidos/${id}/status`, {
+      const resposta = await fetch(`https://api-ecommerce-oficial.onrender.com/api/pedidos/${id}/status`, {
         method: 'PUT',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ status: novoStatus })

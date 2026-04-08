@@ -13,7 +13,7 @@ const Vitrine = ({ carrinho, setCarrinho }) => {
   const navigate = useNavigate();
 
   useEffect(() => {
-    fetch('https://api-ecommerce-pi-ohio.onrender.com')
+    fetch('https://api-ecommerce-oficial.onrender.com')
       .then((resposta) => resposta.json())
       .then((dados) => {
         if (Array.isArray(dados)) {
