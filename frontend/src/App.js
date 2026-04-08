@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { BrowserRouter as Router, Routes, Route, Link, Navigate, useNavigate } from 'react-router-dom';
 import { ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
-
+import Footer from './components/Footer';
 import Vitrine from './components/Vitrine';
 import Dashboard from './components/Dashboard';
 import Login from './components/Login';
@@ -29,7 +29,7 @@ const MenuNavegacao = ({ qtdCarrinho }) => {
 
   return (
     <header role="banner" className="header-nav">
-      <h2 style={{ margin: 0 }}>E-commerce Acessível - PI</h2>
+      <h2 style={{ margin: 0, color: '#f39c12', textShadow: '1px 1px 2px #000' }}>🎸 Kaio Music Store</h2>
       <nav aria-label="Navegação Principal">
         <ul style={{ listStyle: 'none', display: 'flex', gap: '20px', margin: 0, padding: 0, alignItems: 'center' }}>
           <li>
@@ -72,6 +72,7 @@ function App() {
         
         <MenuNavegacao qtdCarrinho={carrinho.length} />
         
+        {/* ÚNICO bloco de Rotas */}
         <div>
           <Routes>
             <Route path="/" element={<Vitrine carrinho={carrinho} setCarrinho={setCarrinho} />} />
@@ -88,6 +89,10 @@ function App() {
             } />
           </Routes>
         </div>
+        
+        {/* Rodapé no final de todas as páginas */}
+        <Footer />
+        
       </div>
     </Router>
   );
