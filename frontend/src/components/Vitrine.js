@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { toast } from 'react-toastify'; // Importando o Toastify
+import { toast } from 'react-toastify'; 
 
 const Vitrine = ({ carrinho, setCarrinho }) => {
   const [produtos, setProdutos] = useState([]);
@@ -8,6 +8,7 @@ const Vitrine = ({ carrinho, setCarrinho }) => {
   
   const [ordenacao, setOrdenacao] = useState('padrao');
   const [categoriaFiltro, setCategoriaFiltro] = useState('Todas');
+  const [busca, setBusca] = useState(''); // NOVO: Estado para a barra de pesquisa
   
   const navigate = useNavigate();
 
@@ -31,7 +32,6 @@ const Vitrine = ({ carrinho, setCarrinho }) => {
     } else {
       setCarrinho([produto]);
     }
-    // Mostra o balãozinho verde de sucesso
     toast.success(`${produto.nome} foi para o carrinho! 🛒`);
   };
 
@@ -40,10 +40,19 @@ const Vitrine = ({ carrinho, setCarrinho }) => {
 
   let produtosFiltrados = Array.isArray(produtos) ? [...produtos] : [];
 
+  // Filtro 1: Por Categoria
   if (categoriaFiltro !== 'Todas') {
     produtosFiltrados = produtosFiltrados.filter(p => p.categoria === categoriaFiltro);
   }
 
+  // Filtro 2: Por Pesquisa de Texto (NOVO)
+  if (busca.trim() !== '') {
+    produtosFiltrados = produtosFiltrados.filter(p => 
+      p.nome.toLowerCase().includes(busca.toLowerCase())
+    );
+  }
+
+  // Filtro 3: Ordenação
   if (ordenacao === 'az') {
     produtosFiltrados.sort((a, b) => a.nome.localeCompare(b.nome));
   } else if (ordenacao === 'za') {
@@ -54,7 +63,7 @@ const Vitrine = ({ carrinho, setCarrinho }) => {
     produtosFiltrados.sort((a, b) => parseFloat(b.preco) - parseFloat(a.preco));
   }
 
-  const categoriasUnicas = ['Todas', ...new Set(produtosFiltrados.map(p => p.categoria))];
+  const categoriasUnicas = ['Todas', ...new Set((Array.isArray(produtos) ? produtos : []).map(p => p.categoria))];
 
   return (
     <main className="container">
@@ -74,7 +83,8 @@ const Vitrine = ({ carrinho, setCarrinho }) => {
         </div>
       </section>
 
-      <section className="filtros-bar" aria-label="Controles de filtragem">
+      {/* Barra de Filtros Atualizada com a Pesquisa */}
+      <section className="filtros-bar" aria-label="Controles de filtragem" style={{ display: 'flex', flexWrap: 'wrap', gap: '15px' }}>
         <div>
           <label htmlFor="filtro-categoria" style={{ fontWeight: 'bold', marginRight: '10px' }}>Categoria:</label>
           <select id="filtro-categoria" value={categoriaFiltro} onChange={(e) => setCategoriaFiltro(e.target.value)}>
@@ -82,6 +92,19 @@ const Vitrine = ({ carrinho, setCarrinho }) => {
           </select>
         </div>
         
+        {/* NOVO: Campo de Busca */}
+        <div style={{ flex: '1', minWidth: '200px' }}>
+          <label htmlFor="busca-texto" className="sr-only" style={{ display: 'none' }}>Buscar produto</label>
+          <input 
+            id="busca-texto"
+            type="text" 
+            placeholder="🔍 Buscar instrumentos..." 
+            value={busca}
+            onChange={(e) => setBusca(e.target.value)}
+            style={{ width: '100%', padding: '10px', borderRadius: '6px', border: '1px solid var(--border)', fontSize: '1rem' }}
+          />
+        </div>
+
         <div>
           <label htmlFor="ordem" style={{ fontWeight: 'bold', marginRight: '10px' }}>Ordenar por:</label>
           <select id="ordem" value={ordenacao} onChange={(e) => setOrdenacao(e.target.value)}>
@@ -101,23 +124,29 @@ const Vitrine = ({ carrinho, setCarrinho }) => {
       )}
 
       <section aria-label="Lista de Produtos" className="vitrine-grid">
-        {produtosFiltrados.map((produto) => (
-          <article key={produto.id} className="produto-card" tabIndex="0">
-            <img 
-              src={produto.imagem_url || 'https://via.placeholder.com/500?text=Sem+Imagem'} 
-              alt={`Fotografia de ${produto.nome}`} 
-              className="produto-imagem"
-              loading="lazy"
-            />
-            <span className="categoria">{produto.categoria}</span>
-            <h2 style={{ marginTop: '10px' }}>{produto.nome}</h2>
-            <p className="preco">R$ {parseFloat(produto.preco).toLocaleString('pt-BR', { minimumFractionDigits: 2 })}</p>
-            
-            <button className="btn btn-comprar" onClick={() => adicionarAoCarrinho(produto)}>
-              Adicionar ao Carrinho
-            </button>
-          </article>
-        ))}
+        {produtosFiltrados.length === 0 && !erro ? (
+          <div style={{ gridColumn: '1 / -1', textAlign: 'center', padding: '40px', color: 'var(--text-muted)' }}>
+            <h3>Nenhum instrumento encontrado para "{busca}"</h3>
+          </div>
+        ) : (
+          produtosFiltrados.map((produto) => (
+            <article key={produto.id} className="produto-card" tabIndex="0">
+              <img 
+                src={produto.imagem_url || 'https://via.placeholder.com/500?text=Sem+Imagem'} 
+                alt={`Fotografia de ${produto.nome}`} 
+                className="produto-imagem"
+                loading="lazy"
+              />
+              <span className="categoria">{produto.categoria}</span>
+              <h2 style={{ marginTop: '10px' }}>{produto.nome}</h2>
+              <p className="preco">R$ {parseFloat(produto.preco).toLocaleString('pt-BR', { minimumFractionDigits: 2 })}</p>
+              
+              <button className="btn btn-comprar" onClick={() => adicionarAoCarrinho(produto)}>
+                Adicionar ao Carrinho
+              </button>
+            </article>
+          ))
+        )}
       </section>
 
       {carrinhoSeguro.length > 0 && (
