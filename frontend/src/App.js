@@ -7,14 +7,6 @@ import Carrinho from './components/Carrinho';
 import LoginCliente from './components/LoginCliente';
 import BarraAcessibilidade from './components/BarraAcessibilidade';
 
-function App() {
-  return (
-    <div>
-      <BarraAcessibilidade />
-      {/* Resto do seu site aqui... */}
-    </div>
-  );
-}
 const RotaProtegida = ({ children }) => {
   const token = localStorage.getItem('token_pi');
   if (!token) return <Navigate to="/login" replace />;
@@ -71,6 +63,9 @@ function App() {
   return (
     <Router>
       <div className="App">
+        {/* A BARRA DE ACESSIBILIDADE ENTRA AQUI, NO TOPO DE TUDO! */}
+        <BarraAcessibilidade />
+        
         <MenuNavegacao qtdCarrinho={carrinho.length} />
         
         <div>
@@ -78,7 +73,7 @@ function App() {
             <Route path="/" element={<Vitrine carrinho={carrinho} setCarrinho={setCarrinho} />} />
             <Route path="/carrinho" element={<Carrinho carrinho={carrinho} setCarrinho={setCarrinho} />} />
             <Route path="/login" element={<Login />} />
-            <Route path="/login-cliente" element={<LoginCliente />} /> {/* <-- Nova Rota Aqui */}
+            <Route path="/login-cliente" element={<LoginCliente />} />
             
             <Route path="/admin" element={
               <RotaProtegida>
