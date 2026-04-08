@@ -5,7 +5,16 @@ import Dashboard from './components/Dashboard';
 import Login from './components/Login';
 import Carrinho from './components/Carrinho';
 import LoginCliente from './components/LoginCliente';
+import BarraAcessibilidade from './components/BarraAcessibilidade';
 
+function App() {
+  return (
+    <div>
+      <BarraAcessibilidade />
+      {/* Resto do seu site aqui... */}
+    </div>
+  );
+}
 const RotaProtegida = ({ children }) => {
   const token = localStorage.getItem('token_pi');
   if (!token) return <Navigate to="/login" replace />;

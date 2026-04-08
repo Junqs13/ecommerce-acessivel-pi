@@ -36,3 +36,13 @@
     transform: rotate(360deg);
   }
 }
+/* Estilo para quando o botão for clicado */
+body.alto-contraste {
+  background-color: #000 !important;
+  color: #ff0 !important; /* Amarelo no preto para máxima leitura */
+}
+body.alto-contraste * {
+  background-color: #000 !important;
+  color: #ff0 !important;
+  border-color: #fff !important;
+}
