@@ -3,16 +3,16 @@ const db = require('../config/db');
 const pedidoController = {
     // Registra uma nova venda vinda do Carrinho (Checkout)
     criar: async (req, res) => {
-        const { usuario_id, nome_cliente, total, metodo_pagamento } = req.body;
+        // Agora recebemos o endereço do frontend!
+        const { usuario_id, nome_cliente, total, metodo_pagamento, endereco } = req.body;
         
         try {
-            // Define o status inicial: Se for cartão, simulamos que já foi aprovado ('Pago')
-            // Se for PIX, entra como 'Aguardando Pagamento'
             const statusInicial = metodo_pagamento === 'cartao' ? 'Pago' : 'Aguardando Pagamento';
 
-            const query = 'INSERT INTO pedidos (usuario_id, nome_cliente, total, metodo_pagamento, status) VALUES (?, ?, ?, ?, ?)';
+            // Incluímos a coluna endereco na instrução SQL
+            const query = 'INSERT INTO pedidos (usuario_id, nome_cliente, total, metodo_pagamento, status, endereco) VALUES (?, ?, ?, ?, ?, ?)';
             
-            await db.query(query, [usuario_id, nome_cliente, total, metodo_pagamento, statusInicial]);
+            await db.query(query, [usuario_id, nome_cliente, total, metodo_pagamento, statusInicial, endereco]);
             
             res.status(201).json({ mensagem: 'Pedido registrado com sucesso no sistema!' });
         } catch (erro) {
