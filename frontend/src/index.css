@@ -10,6 +10,14 @@
   --accent-hover: #e84118;
   --border: #dcdde1;
 }
+body.tema-escuro {
+  --bg-body: #121212; /* Fundo bem escuro */
+  --bg-card: #1e1e1e; /* Fundo dos cards (um pouco mais claro que o fundo) */
+  --text-main: #e0e0e0; /* Texto claro */
+  --text-muted: #a0a0a0; /* Texto secundário cinza */
+  --primary: #0f1933; /* Azul mais profundo para o cabeçalho */
+  --border: #333333; /* Bordas escuras */
+}
 
 body {
   margin: 0;
