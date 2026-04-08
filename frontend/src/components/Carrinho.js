@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
+import { toast } from 'react-toastify'; // Importando o Toastify
 
 const Carrinho = ({ carrinho, setCarrinho }) => {
   const [cep, setCep] = useState('');
@@ -14,27 +15,27 @@ const Carrinho = ({ carrinho, setCarrinho }) => {
   };
 
   const simularFrete = () => {
-    // Simulação simples: se digitar algo, cobra 50 reais de frete
     if (cep.length >= 8) setFrete(50.00);
   };
 
   const finalizarCompra = () => {
-    if (carrinho.length === 0) return alert('O seu carrinho está vazio!');
+    if (carrinho.length === 0) {
+      toast.error('O seu carrinho está vazio!'); // Alerta vermelho
+      return;
+    }
     
-    // Verifica se existe um utilizador na memória do navegador
     const dadosUtilizador = localStorage.getItem('usuario_pi');
     
     if (!dadosUtilizador) {
-      // Se não estiver logado, envia para a página de identificação
-      alert('Para finalizar a encomenda, precisamos que se identifique.');
+      toast.warning('Para finalizar a encomenda, precisamos que se identifique.'); // Alerta amarelo
       navigate('/login-cliente');
       return;
     }
 
     const utilizador = JSON.parse(dadosUtilizador);
-    alert(`🎉 Parabéns, ${utilizador.nome}! A sua encomenda foi registada com sucesso.`);
-    setCarrinho([]); // Esvazia o carrinho após a compra
-    navigate('/'); // Volta para a loja
+    toast.success(`🎉 Parabéns, ${utilizador.nome}! A sua encomenda foi registada com sucesso.`); // Alerta verde
+    setCarrinho([]); 
+    navigate('/'); 
   };
 
   return (
@@ -53,7 +54,6 @@ const Carrinho = ({ carrinho, setCarrinho }) => {
       ) : (
         <div style={{ display: 'flex', gap: '30px', flexWrap: 'wrap', marginTop: '20px' }}>
           
-          {/* Lista de Produtos no Carrinho */}
           <section style={{ flex: '2', minWidth: '300px', backgroundColor: 'var(--bg-card)', padding: '20px', borderRadius: '12px', boxShadow: '0 4px 10px rgba(0,0,0,0.05)' }}>
             <h2 style={{ marginTop: 0 }}>Seus Itens</h2>
             <ul style={{ listStyle: 'none', padding: 0 }}>
@@ -74,7 +74,6 @@ const Carrinho = ({ carrinho, setCarrinho }) => {
             </ul>
           </section>
 
-          {/* Resumo e Pagamento */}
           <section style={{ flex: '1', minWidth: '280px', backgroundColor: 'var(--bg-card)', padding: '20px', borderRadius: '12px', boxShadow: '0 4px 10px rgba(0,0,0,0.05)', height: 'fit-content' }}>
             <h2 style={{ marginTop: 0 }}>Resumo do Pedido</h2>
             

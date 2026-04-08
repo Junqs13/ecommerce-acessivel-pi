@@ -1,5 +1,8 @@
 import React, { useState } from 'react';
 import { BrowserRouter as Router, Routes, Route, Link, Navigate, useNavigate } from 'react-router-dom';
+import { ToastContainer } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
+
 import Vitrine from './components/Vitrine';
 import Dashboard from './components/Dashboard';
 import Login from './components/Login';
@@ -13,7 +16,7 @@ const RotaProtegida = ({ children }) => {
   return children;
 };
 
-// O Menu agora recebe a quantidade de itens no carrinho
+// O Menu recebe a quantidade de itens no carrinho
 const MenuNavegacao = ({ qtdCarrinho }) => {
   const navigate = useNavigate();
   const token = localStorage.getItem('token_pi');
@@ -33,7 +36,6 @@ const MenuNavegacao = ({ qtdCarrinho }) => {
             <Link to="/" aria-label="Ir para a página da loja">🏪 Loja</Link>
           </li>
           
-          {/* Link para o carrinho com a quantidade dinâmica */}
           <li>
             <Link to="/carrinho" style={{ color: 'var(--accent)' }}>
               🛒 Carrinho ({qtdCarrinho})
@@ -57,14 +59,16 @@ const MenuNavegacao = ({ qtdCarrinho }) => {
 };
 
 function App() {
-  // A memória do carrinho agora vive aqui no App.js!
   const [carrinho, setCarrinho] = useState([]);
 
   return (
     <Router>
       <div className="App">
-        {/* A BARRA DE ACESSIBILIDADE ENTRA AQUI, NO TOPO DE TUDO! */}
+        {/* Barra de Acessibilidade */}
         <BarraAcessibilidade />
+        
+        {/* Container das Notificações Toastify */}
+        <ToastContainer position="bottom-right" autoClose={3000} theme="colored" />
         
         <MenuNavegacao qtdCarrinho={carrinho.length} />
         

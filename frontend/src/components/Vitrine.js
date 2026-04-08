@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { toast } from 'react-toastify'; // Importando o Toastify
 
 const Vitrine = ({ carrinho, setCarrinho }) => {
   const [produtos, setProdutos] = useState([]);
@@ -14,12 +15,10 @@ const Vitrine = ({ carrinho, setCarrinho }) => {
     fetch('https://api-ecommerce-pi.onrender.com/api/produtos')
       .then((resposta) => resposta.json())
       .then((dados) => {
-        // TRAVA DE SEGURANÇA: Verifica se a API mandou uma lista de verdade
         if (Array.isArray(dados)) {
           setProdutos(dados);
           setErro(null);
         } else {
-          // Se mandou um objeto de erro, exibe na tela
           setErro(dados.erro || 'A API não retornou a lista de instrumentos.');
         }
       })
@@ -27,18 +26,18 @@ const Vitrine = ({ carrinho, setCarrinho }) => {
   }, []);
 
   const adicionarAoCarrinho = (produto) => {
-    // Garante que o carrinho é um array antes de adicionar
     if (Array.isArray(carrinho)) {
       setCarrinho([...carrinho, produto]);
     } else {
       setCarrinho([produto]);
     }
+    // Mostra o balãozinho verde de sucesso
+    toast.success(`${produto.nome} foi para o carrinho! 🛒`);
   };
 
   const carrinhoSeguro = Array.isArray(carrinho) ? carrinho : [];
   const totalCarrinho = carrinhoSeguro.reduce((total, item) => total + parseFloat(item.preco), 0);
 
-  // Lógica de Filtragem e Ordenação com proteção "is not iterable"
   let produtosFiltrados = Array.isArray(produtos) ? [...produtos] : [];
 
   if (categoriaFiltro !== 'Todas') {
@@ -95,7 +94,6 @@ const Vitrine = ({ carrinho, setCarrinho }) => {
         </div>
       </section>
 
-      {/* SE HOUVER ERRO, MOSTRA NA TELA EM VEZ DE QUEBRAR O SITE */}
       {erro && (
         <div role="alert" style={{ backgroundColor: '#ff7675', color: 'white', padding: '15px', borderRadius: '8px', marginBottom: '20px', textAlign: 'center', fontWeight: 'bold' }}>
           ⚠️ Aviso: {erro}
