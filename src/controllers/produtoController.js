@@ -11,14 +11,14 @@ const produtoController = {
         }
     },
 
-    estatisticas: async (req, res) => {
+   estatisticas: async (req, res) => {
         try {
             const [porCategoria] = await db.query(`
-                SELECT categoria, COUNT(*) as quantidade_modelos, SUM(quantidade) as total_pecas_estoque, SUM(preco * quantidade) as valor_total_estoque
+                SELECT categoria, COUNT(*) as quantidade_modelos, SUM(estoque) as total_pecas_estoque, SUM(preco * estoque) as valor_total_estoque
                 FROM produtos GROUP BY categoria
             `);
             const [geral] = await db.query(`
-                SELECT COUNT(*) as total_produtos, SUM(quantidade) as total_itens, SUM(preco * quantidade) as patrimonio_total
+                SELECT COUNT(*) as total_produtos, SUM(estoque) as total_itens, SUM(preco * estoque) as patrimonio_total
                 FROM produtos
             `);
             res.json({ porCategoria, geral: geral[0] });
