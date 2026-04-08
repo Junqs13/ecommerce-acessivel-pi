@@ -2,13 +2,13 @@ const express = require('express');
 const router = express.Router();
 const produtoController = require('../controllers/produtoController');
 
-// Rota para listar todos os produtos
+// Rotas públicas (Vitrine e Dashboard)
 router.get('/', produtoController.listarTodos);
-
-// NOVO: Rota para as estatísticas do Dashboard
 router.get('/estatisticas', produtoController.estatisticas);
-
-// Rota para buscar um produto específico pelo ID
 router.get('/:id', produtoController.buscarPorId);
+
+// NOVAS ROTAS DE ADMINISTRAÇÃO (Gerir Produtos)
+router.post('/', produtoController.criar);
+router.delete('/:id', produtoController.deletar);
 
 module.exports = router;
