@@ -5,28 +5,41 @@ require('dotenv').config();
 // Inicializa o app
 const app = express();
 
-// Middlewares
-app.use(cors());
-app.use(express.json());
+// --- CONFIGURAÇÃO DE SEGURANÇA E CAPACIDADE ---
+
+// 1. Middlewares de Limite (Essencial para Imagens em Base64)
+// Aumentamos para 50mb para que o banco aceite as fotos enviadas pelo Dashboard
+app.use(express.json({ limit: '50mb' }));
+app.use(express.urlencoded({ limit: '50mb', extended: true }));
+
+// 2. Middleware de CORS (Garante que o Frontend acesse o Backend sem erros)
+app.use(cors({
+    origin: '*', // Em produção, você pode trocar '*' pela sua URL da Vercel
+    methods: ['GET', 'POST', 'PUT', 'DELETE'],
+    allowedHeaders: ['Content-Type', 'Authorization']
+}));
+
+// --- CONEXÃO E ROTAS ---
 
 // Importa a conexão com o banco
 const db = require('./src/config/db');
 
 // Importa as rotas
 const produtoRoutes = require('./src/routes/produtoRoutes');
-const usuarioRoutes = require('./src/routes/usuarioRoutes'); // <--- Nova rota importada
+const usuarioRoutes = require('./src/routes/usuarioRoutes'); 
 const pedidoRoutes = require('./src/routes/pedidoRoutes');
 
 // Configura o uso das rotas
 app.use('/api/produtos', produtoRoutes);
-app.use('/api/usuarios', usuarioRoutes); // <--- Nova rota em uso
+app.use('/api/usuarios', usuarioRoutes); 
 app.use('/api/pedidos', pedidoRoutes);
-// Rota de teste
+
+// Rota de teste para verificar se o servidor de Ohio está respondendo
 app.get('/', (req, res) => {
-    res.json({ mensagem: 'API do E-commerce de Instrumentos Musicais rodando perfeitamente!' });
+    res.json({ mensagem: 'API de Ohio rodando perfeitamente e preparada para grandes volumes de dados!' });
 });
 
-// Define a porta e inicia o servidor APENAS se não estiver rodando teste
+// Define a porta e inicia o servidor
 const PORT = process.env.PORT || 3000;
 
 if (require.main === module) {
