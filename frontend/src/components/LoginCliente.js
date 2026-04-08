@@ -19,11 +19,11 @@ const LoginCliente = () => {
     const corpoRequisicao = modoLogin ? { email, senha } : { nome, email, senha };
 
     try {
-      const resposta = await fetch(`$https://api-ecommerce-pi-ohio.onrender.com{endpoint}`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(corpoRequisicao)
-      });
+      const resposta = await fetch(`https://api-ecommerce-pi-ohio.onrender.com${endpoint}`, {
+  method: 'POST',
+  headers: { 'Content-Type': 'application/json' },
+  body: JSON.stringify(corpoRequisicao)
+});
 
       const dados = await resposta.json();
 
