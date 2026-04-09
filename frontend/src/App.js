@@ -3,6 +3,7 @@ import { BrowserRouter as Router, Routes, Route, Link, Navigate, useNavigate } f
 import { ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import Footer from './components/Footer';
+import BannersDestaque from './components/BannersDestaque';
 import Vitrine from './components/Vitrine';
 import Blog from './components/Blog';
 import Dashboard from './components/Dashboard';
@@ -91,7 +92,7 @@ function App() {
             } />
           </Routes>
         </div>
-        
+        <BannersDestaque />
         <Footer />
       </div>
     </Router>
