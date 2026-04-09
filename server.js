@@ -28,7 +28,7 @@ const db = require('./src/config/db');
 const produtoRoutes = require('./src/routes/produtoRoutes');
 const usuarioRoutes = require('./src/routes/usuarioRoutes'); 
 const pedidoRoutes = require('./src/routes/pedidoRoutes');
-const artigoRoutes = require('./routes/artigoRoutes');
+const artigoRoutes = require('./src/routes/artigoRoutes');
 // Configura o uso das rotas
 app.use('/api/produtos', produtoRoutes);
 app.use('/api/usuarios', usuarioRoutes); 

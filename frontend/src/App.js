@@ -81,7 +81,6 @@ function App() {
             <Route path="/carrinho" element={<Carrinho carrinho={carrinho} setCarrinho={setCarrinho} />} />
             <Route path="/login" element={<Login />} />
             <Route path="/login-cliente" element={<LoginCliente />} />
-            <Route path="/blog" element={<Blog />} />
             <Route path="/blog/:artigo" element={<Blog />} /> 
             <Route path="/admin" element={
               <RotaProtegida>
