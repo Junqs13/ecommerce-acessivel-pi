@@ -4,6 +4,7 @@ import { ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import Footer from './components/Footer';
 import Vitrine from './components/Vitrine';
+import Blog from './components/Blog';
 import Dashboard from './components/Dashboard';
 import Login from './components/Login';
 import Carrinho from './components/Carrinho';
@@ -76,6 +77,7 @@ function App() {
         <div>
           <Routes>
             <Route path="/" element={<Vitrine carrinho={carrinho} setCarrinho={setCarrinho} />} />
+            <Route path="/blog/:artigo" element={<Blog />} />
             <Route path="/carrinho" element={<Carrinho carrinho={carrinho} setCarrinho={setCarrinho} />} />
             <Route path="/login" element={<Login />} />
             <Route path="/login-cliente" element={<LoginCliente />} />
