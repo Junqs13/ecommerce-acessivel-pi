@@ -17,7 +17,6 @@ const RotaProtegida = ({ children }) => {
   return children;
 };
 
-// O Menu recebe a quantidade de itens no carrinho
 const MenuNavegacao = ({ qtdCarrinho }) => {
   const navigate = useNavigate();
   const token = localStorage.getItem('token_pi');
@@ -35,6 +34,11 @@ const MenuNavegacao = ({ qtdCarrinho }) => {
         <ul style={{ listStyle: 'none', display: 'flex', gap: '20px', margin: 0, padding: 0, alignItems: 'center' }}>
           <li>
             <Link to="/" aria-label="Ir para a página da loja">🏪 Loja</Link>
+          </li>
+          
+          {/* NOVO: Link direto para o Blog no Topo */}
+          <li>
+            <Link to="/blog" aria-label="Acessar o Blog">📰 Blog</Link>
           </li>
           
           <li>
@@ -65,23 +69,19 @@ function App() {
   return (
     <Router>
       <div className="App">
-        {/* Barra de Acessibilidade */}
         <BarraAcessibilidade />
-        
-        {/* Container das Notificações Toastify */}
         <ToastContainer position="bottom-right" autoClose={3000} theme="colored" />
-        
         <MenuNavegacao qtdCarrinho={carrinho.length} />
         
-        {/* ÚNICO bloco de Rotas */}
         <div>
           <Routes>
             <Route path="/" element={<Vitrine carrinho={carrinho} setCarrinho={setCarrinho} />} />
-            <Route path="/blog/:artigo" element={<Blog />} />
             <Route path="/carrinho" element={<Carrinho carrinho={carrinho} setCarrinho={setCarrinho} />} />
             <Route path="/login" element={<Login />} />
             <Route path="/login-cliente" element={<LoginCliente />} />
+            <Route path="/blog" element={<Blog />} />
             <Route path="/blog/:artigo" element={<Blog />} /> 
+            
             <Route path="/admin" element={
               <RotaProtegida>
                 <div style={{ maxWidth: '1200px', margin: '0 auto', padding: '20px' }}>
@@ -92,9 +92,7 @@ function App() {
           </Routes>
         </div>
         
-        {/* Rodapé no final de todas as páginas */}
         <Footer />
-        
       </div>
     </Router>
   );

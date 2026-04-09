@@ -7,27 +7,21 @@ const Blog = () => {
   const [artigos, setArtigos] = useState([]);
   const [carregando, setCarregando] = useState(true);
 
-  // Busca os artigos reais do Banco de Dados
+  // A IMAGEM PADRÃO SE A ORIGINAL QUEBRAR
+  const imagemPadrao = 'https://images.unsplash.com/photo-1511379938547-c1f69419868d?auto=format&fit=crop&w=800&q=80';
+
   useEffect(() => {
     fetch('https://api-ecommerce-oficial.onrender.com/api/artigos')
       .then(res => res.json())
-      .then(data => {
-        setArtigos(data);
-        setCarregando(false);
-      })
-      .catch(erro => {
-        console.error('Erro ao carregar o blog:', erro);
-        setCarregando(false);
-      });
+      .then(data => { setArtigos(data); setCarregando(false); })
+      .catch(erro => { console.error('Erro ao carregar o blog:', erro); setCarregando(false); });
   }, []);
 
-  if (carregando) {
-    return <main className="container" style={{ marginTop: '40px', textAlign: 'center' }}><h2>Carregando artigos...</h2></main>;
-  }
+  if (carregando) return <main className="container" style={{ marginTop: '40px', textAlign: 'center' }}><h2>Carregando artigos...</h2></main>;
 
-  // Se houver um artigo na URL, mostra o post completo.
   const postAtual = artigos.find(a => a.slug === artigo);
 
+  // TELA 1: LENDO UM ARTIGO ESPECÍFICO
   if (artigo && postAtual) {
     return (
       <main className="container" style={{ marginTop: '40px', padding: '0 20px', minHeight: '60vh' }}>
@@ -41,11 +35,14 @@ const Blog = () => {
             Publicado em {new Date(postAtual.data_publicacao).toLocaleDateString('pt-BR')}
           </span>
           
-          {postAtual.imagem_url && (
-            <div style={{ width: '100%', height: '350px', borderRadius: '8px', overflow: 'hidden', marginBottom: '30px' }}>
-              <img src={postAtual.imagem_url} alt={postAtual.titulo} style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
-            </div>
-          )}
+          <div style={{ width: '100%', height: '350px', borderRadius: '8px', overflow: 'hidden', marginBottom: '30px', backgroundColor: '#000' }}>
+            <img 
+              src={postAtual.imagem_url || imagemPadrao} 
+              onError={(e) => { e.target.onerror = null; e.target.src = imagemPadrao; }} // Sistema anti-quebra
+              alt={postAtual.titulo} 
+              style={{ width: '100%', height: '100%', objectFit: 'cover' }} 
+            />
+          </div>
           
           <div style={{ fontSize: '1.2rem', lineHeight: '1.8', color: 'var(--text-main)', whiteSpace: 'pre-wrap' }}>
             {postAtual.conteudo}
@@ -55,7 +52,7 @@ const Blog = () => {
     );
   }
 
-  // Tela principal do Blog (Lista de Artigos)
+  // TELA 2: LISTAGEM DE TODOS OS ARTIGOS
   return (
     <main className="container" style={{ marginTop: '40px', padding: '0 20px', minHeight: '60vh' }}>
       <h1 style={{ color: 'var(--primary)', borderBottom: '2px solid var(--border)', paddingBottom: '15px' }}>
@@ -68,11 +65,14 @@ const Blog = () => {
         <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))', gap: '30px', marginTop: '30px' }}>
           {artigos.map((post) => (
             <div key={post.id} style={{ backgroundColor: 'var(--bg-card)', borderRadius: '12px', overflow: 'hidden', boxShadow: '0 4px 10px rgba(0,0,0,0.1)', display: 'flex', flexDirection: 'column' }}>
-              {post.imagem_url && (
-                <div style={{ height: '200px', overflow: 'hidden' }}>
-                  <img src={post.imagem_url} alt={post.titulo} style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
-                </div>
-              )}
+              <div style={{ height: '200px', overflow: 'hidden', backgroundColor: '#000' }}>
+                <img 
+                  src={post.imagem_url || imagemPadrao} 
+                  onError={(e) => { e.target.onerror = null; e.target.src = imagemPadrao; }} // Sistema anti-quebra
+                  alt={post.titulo} 
+                  style={{ width: '100%', height: '100%', objectFit: 'cover' }} 
+                />
+              </div>
               <div style={{ padding: '20px', display: 'flex', flexDirection: 'column', flexGrow: 1 }}>
                 <span style={{ color: 'var(--text-muted)', fontSize: '0.85rem', marginBottom: '10px' }}>
                   {new Date(post.data_publicacao).toLocaleDateString('pt-BR')}
