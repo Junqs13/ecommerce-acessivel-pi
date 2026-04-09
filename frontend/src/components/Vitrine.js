@@ -10,7 +10,7 @@ const Vitrine = ({ carrinho, setCarrinho }) => {
   const [categoriaFiltro, setCategoriaFiltro] = useState('Todas');
   const [busca, setBusca] = useState('');
   const [paginaAtual, setPaginaAtual] = useState(1);
-  const produtosPorPagina = 10;
+  const produtosPorPagina = 12;
 
   // ESTADOS DOS BANNERS DINÂMICOS
   const [banners, setBanners] = useState([]);

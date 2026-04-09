@@ -29,19 +29,16 @@ const MenuNavegacao = ({ qtdCarrinho }) => {
   };
 
   return (
-    <header role="banner" className="header-nav">
-      <h2 style={{ margin: 0, color: '#f39c12', textShadow: '1px 1px 2px #000' }}>🎸 Kaio Music Store</h2>
-      <nav aria-label="Navegação Principal">
-        <ul style={{ listStyle: 'none', display: 'flex', gap: '20px', margin: 0, padding: 0, alignItems: 'center' }}>
-          <li>
-            <Link to="/" aria-label="Ir para a página da loja">🏪 Loja</Link>
-          </li>
-          
-          {/* NOVO: Link direto para o Blog no Topo */}
-          <li>
-            <Link to="/blog" aria-label="Acessar o Blog">📰 Blog</Link>
-          </li>
-          
+    <header role="banner" className="header-nav" style={{ display: 'flex', flexWrap: 'wrap', justifyContent: 'space-between', alignItems: 'center', padding: '15px 20px', gap: '15px' }}>
+      
+      <h2 style={{ margin: 0, color: '#f39c12', textShadow: '1px 1px 2px #000', flex: '1 1 250px', textAlign: 'center' }}>
+        🎸 Kaio Music Store
+      </h2>
+      
+      <nav aria-label="Navegação Principal" style={{ flex: '1 1 auto' }}>
+        <ul style={{ listStyle: 'none', display: 'flex', flexWrap: 'wrap', gap: '15px', margin: 0, padding: 0, alignItems: 'center', justifyContent: 'center' }}>
+          <li><Link to="/" aria-label="Ir para a página da loja">🏪 Loja</Link></li>
+          <li><Link to="/blog" aria-label="Acessar o Blog">📰 Blog</Link></li>
           <li>
             <Link to="/carrinho" style={{ color: 'var(--accent)' }}>
               🛒 Carrinho ({qtdCarrinho})
@@ -49,9 +46,7 @@ const MenuNavegacao = ({ qtdCarrinho }) => {
           </li>
           
           {!token ? (
-            <li>
-              <Link to="/login" style={{ color: '#fff', border: '1px solid #fff' }}>🔐 Entrar</Link>
-            </li>
+            <li><Link to="/login" style={{ color: '#fff', border: '1px solid #fff' }}>🔐 Entrar</Link></li>
           ) : (
             <>
               <li><Link to="/admin">⚙️ Painel Admin</Link></li>
@@ -60,6 +55,7 @@ const MenuNavegacao = ({ qtdCarrinho }) => {
           )}
         </ul>
       </nav>
+      
     </header>
   );
 };
