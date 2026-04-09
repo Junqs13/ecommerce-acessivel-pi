@@ -28,12 +28,12 @@ const db = require('./src/config/db');
 const produtoRoutes = require('./src/routes/produtoRoutes');
 const usuarioRoutes = require('./src/routes/usuarioRoutes'); 
 const pedidoRoutes = require('./src/routes/pedidoRoutes');
-
+const artigoRoutes = require('./routes/artigoRoutes');
 // Configura o uso das rotas
 app.use('/api/produtos', produtoRoutes);
 app.use('/api/usuarios', usuarioRoutes); 
 app.use('/api/pedidos', pedidoRoutes);
-
+app.use('/api/artigos', artigoRoutes);
 // Rota de teste para verificar se o servidor de Ohio está respondendo
 app.get('/', (req, res) => {
     res.json({ mensagem: 'API de Ohio rodando perfeitamente e preparada para grandes volumes de dados!' });
