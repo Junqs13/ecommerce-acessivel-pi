@@ -158,6 +158,9 @@ const Dashboard = () => {
           <button onClick={() => setAbaAtiva('vendas')} style={{ padding: '10px 20px', fontWeight: 'bold', border: '1px solid var(--border)', borderRadius: '5px', cursor: 'pointer', background: abaAtiva === 'vendas' ? 'var(--primary)' : 'var(--bg-card)', color: abaAtiva === 'vendas' ? '#fff' : 'var(--text-main)' }}>
             🛍️ Gestão de Vendas
           </button>
+          <button onClick={() => setAbaAtiva('blog')} style={{ padding: '10px 20px', fontWeight: 'bold', border: '1px solid var(--border)', borderRadius: '5px', cursor: 'pointer', background: abaAtiva === 'blog' ? 'var(--primary)' : 'var(--bg-card)', color: abaAtiva === 'blog' ? '#fff' : 'var(--text-main)' }}>
+            📝 Gestão de Blog
+          </button>
         </div>
       </div>
 
@@ -326,7 +329,68 @@ const Dashboard = () => {
           </div>
         </div>
       )}
+{/* ABA 4: GESTÃO DO BLOG */}
+      {abaAtiva === 'blog' && (
+        <div style={{ display: 'flex', gap: '30px', flexWrap: 'wrap' }}>
+          
+          <div style={{ flex: '1', minWidth: '300px', backgroundColor: 'var(--bg-card)', padding: '20px', borderRadius: '10px', boxShadow: '0 4px 10px rgba(0,0,0,0.05)', height: 'fit-content' }}>
+            <h3 style={{ marginTop: 0 }}>✍️ Escrever Novo Artigo</h3>
+            <form style={{ display: 'flex', flexDirection: 'column', gap: '15px' }}>
+              <div>
+                <label style={labelStyle}>Título do Artigo:</label>
+                <input type="text" placeholder="Ex: A História do Rock" style={inputStyle} />
+              </div>
+              <div>
+                <label style={labelStyle}>Resumo (Para a vitrine):</label>
+                <textarea placeholder="Pequeno texto para chamar atenção..." style={{...inputStyle, minHeight: '60px'}} />
+              </div>
+              <div>
+                <label style={labelStyle}>Conteúdo Completo:</label>
+                <textarea placeholder="Escreva seu texto aqui..." style={{...inputStyle, minHeight: '150px'}} />
+              </div>
+              <div>
+                <label style={labelStyle}>Link da Imagem de Capa:</label>
+                <input type="url" placeholder="https://..." style={inputStyle} />
+              </div>
+              <button type="button" onClick={() => toast.info('A API do Blog será conectada no próximo passo!')} className="btn btn-primary" style={{ padding: '15px', fontSize: '1.1rem' }}>
+                Publicar Artigo
+              </button>
+            </form>
+          </div>
 
+          <div style={{ flex: '2', minWidth: '350px', backgroundColor: 'var(--bg-card)', padding: '20px', borderRadius: '10px', boxShadow: '0 4px 10px rgba(0,0,0,0.05)' }}>
+            <h3 style={{ marginTop: 0 }}>Artigos Publicados</h3>
+            <table style={{ width: '100%', borderCollapse: 'collapse', textAlign: 'left' }}>
+              <thead>
+                <tr style={{ borderBottom: '2px solid var(--border)' }}>
+                  <th style={{ padding: '10px 0' }}>Título</th>
+                  <th>Data</th>
+                  <th>Ações</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr style={{ borderBottom: '1px solid var(--border)' }}>
+                  <td style={{ padding: '15px 0', fontWeight: 'bold' }}>🎸 A Revolução dos Beatles no Estúdio</td>
+                  <td>10/04/2026</td>
+                  <td style={{ display: 'flex', gap: '5px' }}>
+                    <button style={{ background: '#3498db', color: '#fff', border: 'none', padding: '6px 10px', borderRadius: '4px', cursor: 'pointer' }}>✏️</button>
+                    <button style={{ background: '#ff4d4d', color: '#fff', border: 'none', padding: '6px 10px', borderRadius: '4px', cursor: 'pointer' }}>🗑️</button>
+                  </td>
+                </tr>
+                <tr style={{ borderBottom: '1px solid var(--border)' }}>
+                  <td style={{ padding: '15px 0', fontWeight: 'bold' }}>🎹 O Som Sombrio e Poético do The Doors</td>
+                  <td>05/04/2026</td>
+                  <td style={{ display: 'flex', gap: '5px' }}>
+                    <button style={{ background: '#3498db', color: '#fff', border: 'none', padding: '6px 10px', borderRadius: '4px', cursor: 'pointer' }}>✏️</button>
+                    <button style={{ background: '#ff4d4d', color: '#fff', border: 'none', padding: '6px 10px', borderRadius: '4px', cursor: 'pointer' }}>🗑️</button>
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+
+        </div>
+      )}
     </section>
   );
 };
